@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Magic 8-Ball</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+    }
+
+    #container {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 400px;
+      background-color: #f0f0f0; /* Light gray background */
+    }
+
+    #eightBall {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+
+    #question {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+
+    #answer {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container">
+    <h1>Crazy 10-Ball</h1>
+    <img id="eightBall" src="/storage/emulated/0/Pictures/Screenshots/Screenshot_20250128-075224_Chrome.png" alt="Magic 8-Ball Image"> 
+    <input type="text" id="question" placeholder="Ask your question...">
+    <button onclick="getAnswer()">Ask</button>
+    <p id="answer"></p>
+  </div>
+
+  <script>
+    function getAnswer() {
+      const responses = [
+        "Allons-y.",
+        "It's not the time that matter it's the person.",
+        "I'm sorry, I'm so sorry.",
+        "Yes you are 4H.",
+        "exactly at the very least it would buy us time.",
+        "Outside those doors we might see anything.",
+        "what is pre-revolutionary France doing on a spaceship get a little perspective.",
+        "Oh your a clever man I call you a genus but I'm in the room.",
+        "Yes sorry good point.",
+        "I'm I being rude again. but its pretty, very pretty.",
+        "Think you seen it all, think again.",
+        "The way I see it, every life is a pile of good things and bad things.",
+        "What? What. What!.",
+        "Is more like a big ball of wibbly-wobbly timey-wimey stuff.",
+        "Some people live more in 20 years than others do in 80.",
+        "Now you just wait. I'm busy",
+        "I'm having a neronaproch I need, I need, I need, I need, I need, I need, I need you to shut up.",
+        "Oh no, no, no, dont do that.",
+        "I dont want to go.",
+        "Dont blink. Dont even blink. Blink and your dead."
+      ];
+
+      const randomIndex = Math.floor(Math.random() * responses.length);
+      const answer = responses[randomIndex];
+
+      document.getElementById("answer").textContent = answer;
+    }
+  </script>
+
+</body>
+</html>
