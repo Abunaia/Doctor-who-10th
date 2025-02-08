@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Interactive Bingo Card</title>
+  <style>
+    table {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 10px;
+      text-align: center;
+      position: relative; /* For absolute positioning of dots */
+    }
+    .dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); /* Center the dot */
+      height: 10px;
+      width: 10px;
+      background-color: red;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Interactive Doctor who  Bingo Card</h1>
+
+  <table id="bingoTable">
+    <tr>
+      <th>D</th>
+      <th>A</th>
+      <th>L</th>
+      <th>E</th>
+      <th>K</th>
+    </tr><script type="text/javascript">const words = ["River Song", "Cybermen", "Cassandra", "Clockword Droin", "Reinette","vashta Nerada","The Beast","Davros","Ood","K9","The  Red Space Suit","Banana", "10th Doctor Coat", "3D Glasses", "Sand Shoes", "The Cup of Tea", "Gas Mask", "Neck Tie", "weeping Anigel", "Rose Tyler", "Dalek", "Sonic Screwdriver","10th Doctor Hand", "K9", "David Tennant",/* Add more words as needed */ ]; // Array of words
+    
+    function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+    }
+    }
+    
+    function createBingoCard(wordList) { // Takes a word list as input
+    shuffleArray(wordList); // Shuffle the words
+    
+    const rows = [];
+    for (let i = 0; i < 5; i++) {
+    const row = [];
+    for (let j = 0; j < 5; j++) {
+    row.push(wordList[i * 5 + j]); // Take the next 5 words
+    }
+    rows.push(row);
+    }
+    return rows;
+    }
+    
+    const bingoCard = createBingoCard(words); // Create card with words
+    
+    // Example of how you might populate a table (assuming you have a table with the id "bingoTable"):
+    function populateTable(card) {
+    const table = document.getElementById('bingoTable');
+    table.innerHTML = '<tr><th>D</th><th>A</th><th>L</th><th>E</th><th>K</th></tr>'; // Clear existing table content
+    
+    card.forEach(row => {
+    const tr = document.createElement('tr');
+    row.forEach(word => {
+    const td = document.createElement('td');
+    td.textContent = word; // Set text content to the word
+    tr.appendChild(td);
+    });
+    table.appendChild(tr);
+    });
+    }
+    
+    populateTable(bingoCard); // Call the function to display the card.
+    
+    </script>
+    <tr>
+      <td id="cell-1">River Song</td>
+      <td id="cell-2">Dalek</td>
+      <td id="cell-3">David Tennant</td>
+      <td id="cell-4">Sonic Screwdriver</td>
+      <td id="cell-5">K9</td>
+    </tr>
+    <tr>
+      <td id="cell-6">The Red Space Suit</td>
+      <td id="cell-7">Weeping Angel</td>
+      <td id="cell-8">Rose Tyler</td>
+      <td id="cell-9">Banana</td>
+      <td id="cell-10">10th Doctor Coat</td>
+    </tr>
+    <tr>
+      <td id="cell-11">3D Glasses</td>
+      <td id="cell-12">Sand Shoes</td>
+      <td id="cell-13"><span style="font-weight: bold;">Tardis</span></td>
+      <td id="cell-14">A Cup of Tea</td>
+      <td id="cell-15">Neck Tie</td>
+    </tr>
+    <tr>
+      <td id="cell-16">The 10th Doctor Hand</td>
+      <td id="cell-17">Cybermen</td>
+      <td id="cell-18">Gas Mask</td>
+      <td id="cell-19">Cassandra</td>
+      <td id="cell-20">Clockwork Droids</td>
+    </tr>
+    <tr>
+      <td id="cell-21">Reinette</td>
+      <td id="cell-22">Vashta Nerada</td>
+      <td id="cell-23">The Beast</td>
+      <td id="cell-24">ood</td>
+      <td id="cell-25">Davros</td>
+    </tr>
+  </table>
+
+  <script>
+    const table = document.getElementById('bingoTable');
+
+    table.addEventListener('click', function(event) {
+      const cell = event.target.closest('td'); 
+      if (cell) {
+        const dot = document.createElement('span');
+        dot.classList.add('dot');
+        cell.appendChild(dot);
+      }
+    });
+  </script>
+
+</body>
+</html>
