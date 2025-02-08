@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Etch-a-Sketch with Image Cursor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+background-image: url('/storage/emulated/0/Pictures/Screenshots/Screenshot_20250128-080209_Google (1).png');
+background-size: contain;
+background-repeat: stretch;
+  margin: 0;
+  overflow: hidden;
+}
+
+#canvas {
+  display: block;
+  touch-action: none;
+}
+
+#cursor {
+  position: absolute; /* Position it over the canvas */
+  pointer-events: none; /* Allow events to pass through to the canvas */
+  width: 100px; /* Adjust cursor size */
+  height: 100px; /* Adjust cursor size */
+  /* Add other cursor styling (e.g., background image) */
+    background-image: url('/storage/emulated/0/Download/Screenshot_20250128-122847_Files by Google (1).png'); /* Replace with your image */
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div id="cursor"></div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const cursor = document.getElementById('cursor');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let x = canvas.width / 2;
+let y = canvas.height / 2;
+let isDrawing = false;
+let lastX = null;
+let lastY = null;
+
+// Set initial cursor position
+setCursorPosition(x, y);
+
+function setCursorPosition(x, y) {
+  cursor.style.left = (x - cursor.offsetWidth / 2) + 'px';
+  cursor.style.top = (y - cursor.offsetHeight / 2) + 'px';
+}
+
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault();
+  isDrawing = true;
+  const touch = e.touches[0];
+  x = touch.clientX;
+  y = touch.clientY;
+  setCursorPosition(x, y); // Update cursor position
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+});
+
+canvas.addEventListener('touchmove', (e) => {
+  e.preventDefault();
+  if (!isDrawing) return;
+
+  const touch = e.touches[0];
+  x = touch.clientX;
+  y = touch.clientY;
+  setCursorPosition(x, y); // Update cursor position
+
+  ctx.lineTo(x, y);
+  ctx.stroke();
+});
+
+canvas.addEventListener('touchend', () => {
+  isDrawing = false;
+});
+
+// ... (Clear function remains the same) ...
+
+</script>
+
+</body>
+</html>
