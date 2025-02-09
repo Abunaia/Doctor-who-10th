@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Crossword Puzzle</title>
+<style>
+body {
+  font-family: sans-serif;
+}
+table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+td {
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+  position: relative; /* Needed for absolute positioning of clue numbers */
+  text-align: center;
+  font-size: 1.2em;
+  padding: 0;
+}
+input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  box-sizing: border-box;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 1.2em;
+  background-color: transparent;
+}
+.black {
+  background-color: black;
+  border: 1px solid black;
+}
+.clue-number {  /* Style for the clue numbers */
+  position: absolute;
+  top: 2px; /* Adjust as needed */
+  left: 2px; /* Adjust as needed */
+  font-size: 0.7em; /* Make the numbers smaller */
+  color: gray; /* Or any color you prefer */
+}
+#clues {
+  margin-top: 20px;
+}
+#clues div {
+  margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
+
+<h1>Crossword Puzzle</h1>
+
+<table>
+  <tr>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number">1</div><input type="text" maxlength="1" id="1a"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2a"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="3a"></td>
+      <td><div class="clue-number">2</div><input type="text" maxlength="1" id="4a"></td>
+    <td class="black"></td>
+      <td class="black"></td>
+        <td class="black"></td>  
+        <td class="black"></td>
+          <td class="black"></td>
+            <td class="black"></td>
+  </tr>
+  <tr>
+    <td class="black"></td>
+      <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="1b"></td>
+      <td class="black"></td> 
+       <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2b"></td>
+    <td class="black"></td>
+     <td class="black"></td>
+       <td class="black"></td>
+         <td class="black"></td>
+           <td class="black"></td>
+             <td class="black"></td>
+  </tr>
+  <tr>
+    <td class="black"></td>
+      <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="1c"></td>
+      <td class="black"></td>
+        <td class="black"></td>
+    <td><div class="clue-number">3</div><input type="text" maxlength="1" id="2c"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="3c"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="4c"></td>
+        <td><div class="clue-number"></div><input type="text" maxlength="1" id="4c"></td>
+            <td><div class="clue-number"></div><input type="text" maxlength="1" id="4c"></td>
+                <td><div class="clue-number">4</div><input type="text" maxlength="1" id="4c"></td>
+    <td class="black"></td>
+  </tr>
+    <tr>
+    <td class="black"></td>
+      <td class="black"></td>
+        <td class="black"></td>
+          <td class="black"></td>
+            <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+      <td class="black"></td>
+        <td class="black"></td>
+          <td class="black"></td>
+            <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+  </tr>
+  <tr>
+   <td class="black"></td>
+     <td class="black"></td>
+       <td class="black"></td>
+         <td class="black"></td>
+           <td class="black"></td>
+   <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+     <td class="black"></td>
+       <td class="black"></td>
+         <td class="black"></td>
+           <td class="black"></td>
+   <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+   <td class="black"></td>
+    </tr>
+    <tr>
+      <td><div class="clue-number">5</div><input type="text" maxlength="1" id="1d"></td>
+        <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+          <td><div class="clue-number">6</div><input type="text" maxlength="1" id="1d"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+      <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+      <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+   <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    </tr>
+    <tr>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+      <td class="black"></td>
+        <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+          <td class="black"></td>
+            <td class="black"></td>
+              <td class="black"></td>
+                <td class="black"></td>
+          <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+            <td class="black"></td>
+    </tr>
+    <tr>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    </tr>
+    <tr>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="1d"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    </tr>
+    <tr>
+    <td class="black"></td>
+        <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    </tr>
+    <tr>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+    <td class="black"></td>
+    <td><div class="clue-number">7</div><input type="text" maxlength="1" id="2d"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+       <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+          <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+             <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+                <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+                   <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    </tr>
+    <tr>
+    <td class="black"></td>
+    <td><div class="clue-number">8</div><input type="text" maxlength="1" id="2d"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+      <td class="black"></td>
+        <td class="black"></td>
+          <td class="black"></td>
+            <td class="black"></td>
+              <td class="black"></td>
+                <td class="black"></td>
+                  <td class="black"></td>
+    </tr>
+    <tr>
+    <td class="black"></td>
+       <td class="black"></td>
+    <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+    <td class="black"></td>
+      <td class="black"></td>
+        <td class="black"></td>
+          <td class="black"></td>
+            <td class="black"></td>
+              <td class="black"></td>
+                <td class="black"></td>
+                  <td class="black"></td>
+                      <td class="black"></td>
+    </tr>
+      <tr>
+      <td class="black"></td>
+         <td class="black"></td>
+      <td><div class="clue-number"></div><input type="text" maxlength="1" id="2d"></td>
+      <td class="black"></td>
+      <td class="black"></td>
+      <td class="black"></td>
+      <td class="black"></td>
+      <td class="black"></td>
+      <td class="black"></td>
+      <td class="black"></td>
+      <td class="black"></td>
+      <td class="black"></td>
+      </tr>
+</table>
+
+<div id="clues">
+  <h2>Clues</h2>
+  <div>1 Across: what companion had 9 to kill but also had 10 to kiss</div>
+  <div>3 Across: the 11 wife name sexy</div>
+  <div>5 Across: The one that killed Rose (the dog) mother</div>
+  <div>7 Across: Nacnoss's title</div> 
+  <div>8 Across: The face of Boe nurse look like</div>
+  <div>2 Down: The Dalek said before the kill</div>
+  <div>1 Down: 9 holds a rose first words said</div>
+  <div>4 Down: 9 poison breath monster stuck in a loop</div>
+  <div>5 down: Lady Cassandra assistant name</div>
+  <div>6 down: 9 doctor thinks you are</div>
+</div>
+
+</body>
+</html>
