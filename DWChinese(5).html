@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Doctor who chinese checker</title>
+   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        #container {
+            width: 100vw; /* Use viewport width */
+            height: 100vh; /* Use viewport height */
+            position: relative;
+            background-image: url(images (1) (2).png); /* Background image URL */
+            background-size: contain; /* or contain, depending on your needs */
+            background-repeat: no-repeat;
+        }
+
+        .dot {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%; /* Make it circular */
+            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+            cursor: grab; /* Indicate draggable */
+            display: flex; /* Use flexbox for image centering */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dot img {
+            max-width: 30px; /* Adjust image size as needed */
+            max-height: 30px;
+            border-radius: 100%; /* Make image circular if you want */
+        }
+
+        .image-popup {
+            position: absolute;
+            top: 30%;
+            left: 30%;
+            transform: translate(-50%, -50%);
+            display: none; /* Hidden by default */
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black backdrop */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .image-popup img {
+            max-width: 80vw; /* or a fixed pixel value */
+            max-height: 80vh; /* or a fixed pixel value */
+        }
+
+        .image-popup span { /* Close button style */
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    </div>
+
+<script>
+    const container = document.getElementById('container');
+    const imageSources = [
+        "Photoroom-20250211_013833.png",
+        "Photoroom-20250211_014522.png",
+        "Photoroom-20250211_014807.png",
+        "Photoroom-20250211_014958.png",
+        "Photoroom-20250211_015150.png",
+        "Photoroom-20250211_015318.png"
+    ];
+
+    let dotCount = 0;
+
+    imageSources.forEach(src => {
+        for (let i = 0; i < 10; i++) {
+            dotCount++;
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            dot.id = 'dot' + dotCount;
+
+            const img = document.createElement('img');
+            img.src = src;
+            img.alt = 'Image ' + (imageSources.indexOf(src) + 1);
+            dot.appendChild(img);
+
+            const popup = document.createElement('div');
+            popup.classList.add('image-popup');
+            popup.id = 'popup' + (imageSources.indexOf(src) + 1);
+            popup.innerHTML = `<img src="${src}" alt="Popup Image ${imageSources.indexOf(src) + 1}"><span onclick="closePopup('popup${imageSources.indexOf(src) + 1}')">&times;</span>`;
+            container.appendChild(popup);
+
+            container.appendChild(dot);
+            makeDraggable(dot, 'popup' + (imageSources.indexOf(src) + 1));
+        }
+    });
+
+
+    let isDragging = false;
+    let currentDot = null;
+    let offsetX, offsetY;
+
+
+    function makeDraggable(dot, popupId) {
+        dot.addEventListener('mousedown', (e) => startDrag(e, dot));
+        dot.addEventListener('touchstart', (e) => startDrag(e.touches[0], dot)); // Touch start
+
+        dot.addEventListener('click', () => {
+            openPopup(popupId);
+        });
+    }
+
+    function startDrag(e, dot) {
+        isDragging = true;
+        currentDot = dot;
+        offsetX = e.clientX - dot.offsetLeft;
+        offsetY = e.clientY - dot.offsetTop;
+
+        container.addEventListener('mousemove', drag);
+        container.addEventListener('touchmove', (e) => drag(e.touches[0])); // Touch move
+
+        container.addEventListener('mouseup', endDrag);
+        container.addEventListener('touchend', endDrag); // Touch end
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            let x = e.clientX - offsetX;
+            let y = e.clientY - offsetY;
+
+            // Keep dot within container bounds
+            const maxX = container.offsetWidth - currentDot.offsetWidth;
+            const maxY = container.offsetHeight - currentDot.offsetHeight;
+            x = Math.max(0, Math.min(x, maxX));
+            y = Math.max(0, Math.min(y, maxY));
+
+            currentDot.style.left = x + 'px';
+            currentDot.style.top = y + 'px';
+        }
+    }
+
+    function endDrag() {
+        isDragging = false;
+        currentDot = null;
+        container.removeEventListener('mousemove', drag);
+        container.removeEventListener('touchmove', drag);
+        container.removeEventListener('mouseup', endDrag);
+        container.removeEventListener('touchend', endDrag);
+        currentDot = null;
+        e.stopPropagation();
+    }
+
+    function openPopup(popupId) {
+        document.getElementById(popupId).style.display = "block";
+    }
+
+    function closePopup(popupId) {
+        document.getElementById(popupId).style.display = "none";
+    }
+
+</script>
+</body>
+</html>
+
