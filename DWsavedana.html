@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circle Race Game</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    
+    #container {
+      width: 400px;
+      height: 400px;
+      position: relative;
+      border: 2px solid #333;
+      border-radius: 50%;
+            background-image: url("/storage/emulated/0/Download/s0_02_wal_47.jpg");
+    }
+    
+  .car { /* Common car styles */
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: 50% 50%;
+    transition: background-color 0.3s ease;
+    background-size: cover;
+    background-color: transparent;
+    border-radius: 50%;
+  }
+  
+  #left-car { /* Left car specific styles */
+    background-image: url("/storage/emulated/0/Download/p00sztsg (1).jpg"); /* Left car image */
+  }
+  
+  #right-car { /* Right car specific styles */
+    background-image: url("/storage/emulated/0/Download/p00sztsg (2).jpg"); /* Right car image */
+  }
+    
+    .ball {
+      width: 30px; /* Adjust as needed */
+      height: 30px; /* Adjust as needed */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: 50% 50%;
+      transition: left 0.3s ease, top 0.3s ease;
+      background-image: url("/storage/emulated/0/Download/Photoroom-20250214_065717.png"); /* Replace with your ball image path */
+      background-size: cover;
+      background-color: transparent;
+      border-radius: 50%; /* Make sure ball is still circular even with image*/
+
+    }
+    
+    #dice-container {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .dice {
+      font-size: 2em;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .dice:hover {
+        transform: scale(1.1);
+    }
+    
+    #winner {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: green;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    #winner.show {
+        opacity: 1;
+    }
+
+    #laps {
+        margin-top: 10px;
+        font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+<div id="container">
+  <div id="left-car" class="car has-ball"></div>
+  <div id="right-car" class="car"></div>
+  <div id="ball" class="ball"></div>
+</div>
+
+<div id="dice-container">
+<h4>Tardis player 1</h4>
+  <div id="dice1" class="dice" onclick="rollDice(1)">🎲</div>
+  <h4>Roboform player 2</h4>
+  <div id="dice2" class="dice" onclick="rollDice(2)">🎲</div>
+</div>
+
+<div id="laps">Laps: <span id="lap-count">0</span> / <span id="total-laps">10</span></div>
+<div id="winner"></div>
+
+<script>
+  const leftCar = document.getElementById("left-car");
+  const rightCar = document.getElementById("right-car");
+  const ball = document.getElementById("ball");
+  const winnerDisplay = document.getElementById("winner");
+  const lapCountDisplay = document.getElementById("lap-count");
+  const totalLapsDisplay = document.getElementById("total-laps");
+  totalLapsDisplay.textContent = 10;
+
+  const trackRadius = 150;
+  let angleLeftCar = -90;
+  let angleRightCar = 90;
+  let leftCarLap = 0;
+  let rightCarLap = 0;
+  let dice1Value = 1;
+  let dice2Value = 1;
+  let totalLaps = 10;
+  let raceInterval;
+  let ballOnLeftCar = true;
+  let animationRunning = true;
+
+  function moveCars() {
+    if (animationRunning) {
+      angleLeftCar += 1;
+      angleRightCar += 1;
+
+      if (angleLeftCar >= 360) {
+        angleLeftCar -= 360;
+        leftCarLap++;
+      }
+
+      if (angleRightCar >= 360) {
+        angleRightCar -= 360;
+        rightCarLap++;
+      }
+
+      const leftX = trackRadius * Math.cos(angleLeftCar * (Math.PI / 180)) + 200;
+      const leftY = trackRadius * Math.sin(angleLeftCar * (Math.PI / 180)) + 200;
+      const rightX = trackRadius * Math.cos(angleRightCar * (Math.PI / 180)) + 200;
+      const rightY = trackRadius * Math.sin(angleRightCar * (Math.PI / 180)) + 200;
+
+      leftCar.style.left = `${leftX - 15}px`; // Adjusted for image size
+      leftCar.style.top = `${leftY - 15}px`;   // Adjusted for image size
+      rightCar.style.left = `${rightX - 15}px`; // Adjusted for image size
+      rightCar.style.top = `${rightY - 15}px`; // Adjusted for image size
+
+
+      const ballX = ballOnLeftCar ? leftX : rightX;
+      const ballY = ballOnLeftCar ? leftY : rightY;
+
+      ball.style.left = `${ballX - 15}px`; // Adjusted for image size
+      ball.style.top = `${ballY - 15}px`;   // Adjusted for image size
+
+      lapCountDisplay.textContent = Math.max(leftCarLap, rightCarLap);
+
+      if (leftCarLap >= totalLaps || rightCarLap >= totalLaps) {
+        clearInterval(raceInterval);
+        animationRunning = false;
+        declareWinner();
+      }
+    }
+  }
+
+  function rollDice(diceNumber) {
+    const randomNumber = Math.floor(Math.random() * 6) + 1;
+
+    if (diceNumber === 1) {
+      dice1Value = randomNumber;
+    } else {
+      dice2Value = randomNumber;
+    }
+
+    document.getElementById(`dice${diceNumber}`).textContent = `🎲 ${randomNumber}`;
+
+    leftCar.classList.remove("has-ball");
+    rightCar.classList.remove("has-ball");
+    if (dice1Value > dice2Value) {
+      ballOnLeftCar = true;
+      leftCar.classList.add("has-ball");
+    } else if (dice2Value > dice1Value) {
+      ballOnLeftCar = false;
+      rightCar.classList.add("has-ball");
+    }
+
+    if (!raceInterval) {
+      raceInterval = setInterval(moveCars, 8);
+    }
+  }
+
+  function declareWinner() {
+    let winner = "";
+    if (leftCarLap > rightCarLap) {
+      winner = "Left car wins!";
+    } else if (rightCarLap > leftCarLap) {
+      winner = "Right car wins!";
+    } else {
+      winner = "It's a tie!";
+    }
+
+    winnerDisplay.textContent = winner;
+    winnerDisplay.classList.add("show");
+  }
+</script>
+
+</body>
+</html>
