@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor who MASH Game</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+    }
+
+    #game-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #spiral-area {
+      width: 300px;
+      height: 300px;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    #spiral-canvas {
+      border: 1px solid black;
+    }
+
+    #categories-area {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .category {
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    .category h3 {
+      margin-top: 0;
+    }
+
+    .option {
+      list-style: none;
+      padding: 5px 0;
+      cursor: pointer;
+    }
+
+    .eliminated {
+      text-decoration: line-through;
+      color: gray;
+      cursor: default;
+    }
+
+    #trigger-area {
+      margin-top: 20px;
+    }
+
+    #results-area {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .result-box {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin: 10px;
+      display: inline-block;
+      width: 200px;
+      background-color: #f9f9f9;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #counter {
+      width: 40px; /* Adjust based on image size */
+      height: 40px;
+      position: absolute;
+      pointer-events: none;
+      background-image: url('/storage/emulated/0/Download/Screenshot_20250128-122847_Files by Google (1).png'); /* Replace with actual image path */
+      background-size: 20px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  </style>
+</head>
+<body>
+
+<div id="game-container">
+  <h1>Doctor Who MASH Game</h1>
+
+  <div id="spiral-area">
+    <canvas id="spiral-canvas" width="300" height="300"></canvas>
+    <div id="counter"></div>
+  </div>
+
+  <div id="categories-area"></div>
+
+  <div id="trigger-area">
+    <button id="trigger-button">Start!</button>
+  </div>
+
+  <div id="results-area"></div>
+</div>
+
+<script>
+  const categories = {
+    WhoYouAre: ["Doctor", "Master", "Dalek", "Companion", "New Alien","Weeping Angel","Cyberman"],
+    WhatYouDid: ["Disapeared", "Ran away", "Recue", "Killed", "Fight","Messed up","Met Someone"],
+    WhatYouGot: ["Kidnap", "Married", "Sick", "Killed", "Kissed", "Trapped", "Saved"],
+    WhereYouFrom: ["Earth", "Alien Planet", "Dimension", "Another Time", "Element","Star", "Moon"],
+    WhoIsWithYou : ["Nobody", "Lover", "Friend", "Doctor", "Master","Dalek","Cyberman"],
+  WhatHappenInTheEnd: ["Died", "Regenated", "Cryed", "Save the day", "Ran Away", "Lived  In Hell","Live Happly Ever After"]
+  };
+
+  const categoriesArea = document.getElementById('categories-area');
+  const spiralCanvas = document.getElementById('spiral-canvas');
+  const triggerButton = document.getElementById('trigger-button');
+  const resultsArea = document.getElementById('results-area');
+  const counterElement = document.getElementById('counter');
+  const ctx = spiralCanvas.getContext('2d');
+
+  let spiralPath = [];
+  let gameStarted = false;
+  let countingInterval;
+  let eliminationInterval;
+  let currentCategoryIndex = 0;
+  let currentOptions = [];
+  let eliminatedIndices = [];
+  let items = [];
+
+  function drawSpiral() {
+    const centerX = spiralCanvas.width / 2;
+    const centerY = spiralCanvas.height / 2;
+    let radius = 10;
+    let angle = 0;
+    spiralPath = [];
+    ctx.clearRect(0, 0, spiralCanvas.width, spiralCanvas.height);
+
+    ctx.beginPath();
+    ctx.moveTo(centerX + radius, centerY);
+
+    for (let i = 0; i < 500; i++) {
+      angle += 0.1;
+      radius += 0.5;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+      ctx.lineTo(x, y);
+      spiralPath.push({ x, y });
+    }
+
+    ctx.strokeStyle = 'black';
+    ctx.stroke();
+  }
+
+  function createCategoriesAndOptions() {
+    categoriesArea.innerHTML = '';
+    Object.keys(categories).forEach(categoryName => {
+      const categoryDiv = document.createElement('div');
+      categoryDiv.classList.add('category');
+      categoryDiv.innerHTML = `<h3>${categoryName}</h3>`;
+
+      const optionsList = document.createElement('ul');
+      categories[categoryName].forEach(option => {
+        const optionItem = document.createElement('li');
+        optionItem.classList.add('option');
+        optionItem.textContent = option;
+        optionsList.appendChild(optionItem);
+      });
+
+      categoryDiv.appendChild(optionsList);
+      categoriesArea.appendChild(categoryDiv);
+    });
+  }
+
+  function startCounter() {
+    let currentCounter = 0;
+    countingInterval = setInterval(() => {
+      if (currentCounter < spiralPath.length) {
+        const { x, y } = spiralPath[currentCounter];
+        counterElement.style.left = `${x - counterElement.offsetWidth / 2}px`;
+        counterElement.style.top = `${y - counterElement.offsetHeight / 2}px`;
+        currentCounter++;
+      } else {
+        clearInterval(countingInterval);
+        displayResult();
+      }
+    }, 50);
+  }
+
+  function startElimination() {
+    currentOptions = Array.from(categoriesArea.querySelectorAll(`.category:nth-child(${currentCategoryIndex + 1}) ul li`));
+    eliminatedIndices = new Array(currentOptions.length).fill(false);
+    items = [...currentOptions].sort(() => Math.random() - 0.5);
+
+    eliminationInterval = setInterval(() => {
+      if (items.length > 1) {
+        let item = items.pop();
+        item.classList.add('eliminated');
+      } else {
+        clearInterval(eliminationInterval);
+        displayResult();
+      }
+    }, 500);
+  }
+
+  function displayResult() {
+    document.querySelectorAll('.statement').forEach(el => el.remove()); // Remove only statements
+
+    const categoryName = Object.keys(categories)[currentCategoryIndex];
+    const remainingOption = currentOptions.find(option => !option.classList.contains('eliminated'));
+    const result = `${categoryName}: ${remainingOption.textContent}`;
+
+    const resultBox = document.createElement('div');
+    resultBox.classList.add('result-box');
+    resultBox.textContent = result;
+    resultsArea.appendChild(resultBox);
+
+    currentCategoryIndex++;
+    if (currentCategoryIndex < Object.keys(categories).length) {
+      startElimination();
+    } else {
+      triggerButton.textContent = 'Start!';
+    }
+  }
+
+  triggerButton.addEventListener('click', () => {
+    if (!gameStarted) {
+      gameStarted = true;
+      triggerButton.textContent = 'Stop!';
+      startCounter();
+      startElimination();
+    } else {
+      clearInterval(countingInterval);
+      clearInterval(eliminationInterval);
+      triggerButton.textContent = 'Start!';
+      gameStarted = false;
+      currentCategoryIndex = 0;
+    }
+  });
+
+  drawSpiral();
+  createCategoriesAndOptions();
+</script>
+
+</body>
+</html>
