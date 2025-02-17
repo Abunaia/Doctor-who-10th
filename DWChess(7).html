@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Doctor who Chess Pieces</title>
+<h1>Doctor who chess</h1>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+#container {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-image: url("/storage/emulated/0/Download/modern-black-chess-board-with-letters-and-numbers-background-design-illustration-free-vector.jpg"); /* Replace with your chessboard image path */
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.piece {
+  position: absolute;
+  width: 50px; /* Adjust size as needed */
+  height: 50px;
+  cursor: grab;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  overflow: hidden; /* Important! */
+}
+
+.piece img {
+  max-width: 100%;  /* Or a specific pixel value if you want */
+  max-height: 100%; /* Or a specific pixel value if you want */
+  object-fit: cover; /* Key for maintaining aspect ratio and filling circle */
+}
+
+
+/* White piece image classes */
+.white-pawn { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250215_060342.png"); }
+.white-rook { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250215_060300.png"); }
+.white-knight { background-image: url("/storage/emulated/0/Pictures/6660fc19b06d8362430123_w803h620.webp"); }
+.white-bishop { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250215_060405.png"); }
+.white-queen { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250215_060319.png"); }
+.white-king { background-image: url("/storage/emulated/0/Download/n8cxgk-b88125133z_120140707124031000ge63e504_10.jpg"); }
+
+/* Black piece image classes */
+.black-pawn { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_221920.png"); }
+.black-rook { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_221406.png"); }
+.black-knight { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_221257.png"); }
+.black-bishop { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_220708.png"); }
+.black-queen { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_215440.png"); }
+.black-king { background-image: url("/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_215553.png"); }
+
+</style>
+</head>
+<body>
+<p>
+<h6>
+<li>white pawn-Nordole</li><li>black pawn-toclafane</li><br>
+<li>white rook-Amy</li><li>black rook-weeping angle</li><br>
+<il>white knight- Rorey</il><li>black knight- krillitaned</li><br>
+<li>white bishop - Dana</li><li>black bishop- silence</li><br>
+<li>white queen - River</li><li>black queen-dalek</li><br>
+<li>white king - 10th doctor</li><li>black king-cybermen</li><br></h6>
+</p>
+<div id="container"></div>
+
+<script>
+const container = document.getElementById('container');
+
+const pieces = [
+    { class: "white-pawn", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250215_060342.png", count: 8 },
+    { class: "white-rook", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250215_060300.png", count: 2 },
+    { class: "white-knight", image: "/storage/emulated/0/Pictures/6660fc19b06d8362430123_w803h620.webp", count: 2 },
+    { class: "white-bishop", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250215_060405.png", count: 2 },
+    { class: "white-queen", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250215_060319.png", count: 1 },
+    { class: "white-king", image: "/storage/emulated/0/Download/n8cxgk-b88125133z_120140707124031000ge63e504_10.jpg", count: 1 },
+
+    { class: "black-pawn", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_221920.png", count: 8 },
+    { class: "black-rook", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_221406.png", count: 2 },
+    { class: "black-knight", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_221257.png", count: 2 },
+    { class: "black-bishop", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_220708.png", count: 2 },
+    { class: "black-queen", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_215440.png", count: 1 },
+    { class: "black-king", image: "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_215553.png", count: 1 },
+];
+
+pieces.forEach(pieceData => {
+    for (let i = 0; i < pieceData.count; i++) {
+        const piece = document.createElement('div');
+        piece.classList.add('piece', pieceData.class);
+
+        const img = document.createElement('img');
+        img.src = pieceData.image;
+        piece.appendChild(img);
+
+        container.appendChild(piece);
+        setPosition(piece);
+        makeDraggable(piece);
+    }
+});
+
+function setPosition(piece) {
+    const containerCenterX = container.offsetWidth / 2;
+    const containerCenterY = container.offsetHeight / 2;
+    const pieceCenterX = piece.offsetWidth / 2;
+    const pieceCenterY = piece.offsetHeight / 2;
+
+    const x = containerCenterX - pieceCenterX;
+    const y = containerCenterY - pieceCenterY;
+
+    piece.style.left = x + 'px';
+    piece.style.top = y + 'px';
+}
+let isDragging = false;
+let currentPiece = null;
+let offsetX, offsetY;
+
+function makeDraggable(piece) {
+  piece.addEventListener('mousedown', startDrag);
+  piece.addEventListener('touchstart', startDrag, { passive: false });
+}
+
+function startDrag(e) {
+  e.preventDefault();
+  isDragging = true;
+  currentPiece = this;
+
+  if (e.type === 'touchstart') {
+    offsetX = e.touches[0].clientX - this.offsetLeft;
+    offsetY = e.touches[0].clientY - this.offsetTop;
+  } else {
+    offsetX = e.clientX - this.offsetLeft;
+    offsetY = e.clientY - this.offsetTop;
+  }
+
+  container.addEventListener('mousemove', drag);
+  container.addEventListener('touchmove', drag, { passive: false });
+
+  container.addEventListener('mouseup', endDrag);
+  container.addEventListener('touchend', endDrag);
+}
+
+function drag(e) {
+    if (isDragging) {
+      e.preventDefault();
+        let x, y;
+        if (e.type === 'touchmove') {
+            x = e.touches[0].clientX - offsetX;
+            y = e.touches[0].clientY - offsetY;
+        } else {
+            x = e.clientX - offsetX;
+            y = e.clientY - offsetY;
+        }
+
+        const maxX = container.offsetWidth - currentPiece.offsetWidth;
+        const maxY = container.offsetHeight - currentPiece.offsetHeight;
+        x = Math.max(0, Math.min(x, maxX));
+        y = Math.max(0, Math.min(y, maxY));
+
+        currentPiece.style.left = x + 'px';
+        currentPiece.style.top = y + 'px';
+    }
+}
+
+function endDrag(e) {
+  e.preventDefault();
+  isDragging = false;
+  currentPiece = null;
+  container.removeEventListener('mousemove', drag);
+  container.removeEventListener('touchmove', drag);
+  container.removeEventListener('mouseup', endDrag);
+  container.removeEventListener('touchend', endDrag);
+}
+
+</script>
+
+</body>
+</html>
