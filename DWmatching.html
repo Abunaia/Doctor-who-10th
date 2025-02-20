@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Spider Card Game</title>
+<style>
+body {
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  min-height: 100vh; /* Ensure full viewport height */
+  margin: 0;
+  background-color: #282c34; /* Dark background */
+  color: white; /* Light text */
+}
+
+#game-area {
+    display: flex;
+    flex-wrap: wrap; /* Allow cards to wrap */
+    justify-content: center; /* Center the cards */
+    width: 80%; /* Occupy most of the width */
+    max-width: 900px; /* Limit the maximum width */
+    margin-top: 20px;
+}
+
+.card {
+  width: 100px; /* Adjust card size */
+  height: 150px; /* Adjust card size */
+  margin: 10px;
+  border: 1px solid #ccc;
+  perspective: 1000px; /* For the flip effect */
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* Hide the back during flip */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px; /* Slightly rounded corners */
+}
+
+.card-front {
+  background-color: #eee; /* Light background for the front */
+  transform: rotateY(180deg); /* Initial rotation to hide the front */
+}
+
+.card-back {
+  background-color: #333; /* Darker background for the back */
+}
+
+.card img {
+  max-width: 90%;
+  max-height: 90%;
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+
+</style>
+</head>
+<body>
+
+<h1>Doctor who <br>Matching game</h1>
+
+<div id="game-area"></div>
+
+<div id="message"></div>
+
+<script>
+const gameArea = document.getElementById('game-area');
+const message = document.getElementById('message');
+let cards = [];
+let flippedCards = [];
+let matchedPairs = 0;
+
+// Array of your image URLs
+const imageURLs = [
+  "/storage/emulated/0/Download/n8cxgk-b88125133z_120140707124031000ge63e504_10.jpg", // Replace with your image paths
+  "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_215440.png",
+  "/storage/emulated/0/Pictures/6660fc19b06d8362430123_w803h620.webp",
+  "/storage/emulated/0/Download/tumblr_mw7uf4D62V1r9zeo4o2_1280.jpg",
+"/storage/emulated/0/Download/n8cxgk-b88125133z_120140707124031000ge63e504_10.jpg", // Replace with your image paths
+  "/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_215440.png",
+  "/storage/emulated/0/Pictures/6660fc19b06d8362430123_w803h620.webp",
+  "/storage/emulated/0/Download/tumblr_mw7uf4D62V1r9zeo4o2_1280.jpg",
+];
+
+// Shuffle the image URLs (Fisher-Yates shuffle)
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+const shuffledImages = shuffle(imageURLs);
+
+// Create the cards
+for (const imageURL of shuffledImages) {
+  const card = document.createElement('div');
+  card.classList.add('card');
+
+  const cardInner = document.createElement('div');
+  cardInner.classList.add('card-inner');
+
+  const cardFront = document.createElement('div');
+  cardFront.classList.add('card-front');
+  const frontImage = document.createElement('img');
+  frontImage.src = imageURL; // Set image source
+  frontImage.alt = "Card Front";
+  cardFront.appendChild(frontImage);
+
+
+  const cardBack = document.createElement('div');
+  cardBack.classList.add('card-back');
+  const backImage = document.createElement('img');
+  backImage.src = "/storage/emulated/0/Download/Screenshot_20250128-122847_Files by Google (1).png"; // Replace with your card back image
+  backImage.alt = "Card Back";
+  cardBack.appendChild(backImage);
+
+  cardInner.appendChild(cardFront);
+  cardInner.appendChild(cardBack);
+  card.appendChild(cardInner);
+
+
+  card.addEventListener('click', flipCard);
+  gameArea.appendChild(card);
+  cards.push(card);
+}
+
+function flipCard() {
+  const card = this;
+
+  if (card.classList.contains('flipped') || flippedCards.length === 2 || card.matched) {
+    return; // Prevent flipping if already flipped, two cards are flipped, or already matched
+  }
+
+  card.classList.add('flipped');
+  flippedCards.push(card);
+
+  if (flippedCards.length === 2) {
+    setTimeout(checkForMatch, 500); // Check for match after a short delay
+  }
+}
+
+function checkForMatch() {
+  const card1 = flippedCards[0];
+  const card2 = flippedCards[1];
+
+  const image1 = card1.querySelector('.card-front img').src;
+  const image2 = card2.querySelector('.card-front img').src;
+
+  if (image1 === image2) {
+    card1.matched = true;
+    card2.matched = true;
+    matchedPairs++;
+
+    if (matchedPairs === imageURLs.length / 2) {
+      message.textContent = "You won!";
+    }
+  } else {
+    card1.classList.remove('flipped');
+    card2.classList.remove('flipped');
+  }
+
+  flippedCards = []; // Reset flipped cards
+}
+
+message.textContent = "Find the matching pairs!";
+
+
+</script>
+
+</body>
+</html>
