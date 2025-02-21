@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hangman Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  font-family: sans-serif;
+  text-align: center; /* Center content */
+}
+#game-area {
+  margin: 20px; /* Add some margin around the game area */
+}
+#word-display {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+#guesses {
+  margin-bottom: 20px;
+}
+#alphabet-buttons {
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap */
+    justify-content: center; /* Center the buttons */
+    margin-bottom: 20px;
+}
+#alphabet-buttons button {
+    font-size: 1.2em;
+    padding: 10px 15px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    background-color: #eee;
+    cursor: pointer;
+}
+#alphabet-buttons button:disabled {
+    background-color: #ddd; /* Gray out disabled buttons */
+    cursor: default;
+}
+
+@media (max-width: 600px) {
+    #word-display {
+        font-size: 1.5em;
+    }
+    #alphabet-buttons button {
+        font-size: 1em;
+        padding: 8px 12px;
+        margin: 3px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div id="game-area">
+  <h1>Doctor Who Hangman</h1>
+  <div id="hangman-image">
+    <img src="/storage/emulated/0/Pictures/Photoroom/Photoroom-20250220_023417.png" alt="Hangman Figure"> </div> <div id="word-display"></div>
+  <div id="guesses"></div>
+  <div id="alphabet-buttons"></div>
+  <p id="message"></p>
+</div>
+
+<script>
+let word = "";
+let wordDisplay = "";
+let guessedLetters = [];
+let remainingGuesses = 6;
+let alphabetButtons; // Store buttons
+
+const words = ["doctor", "banana", "rose", "dana", "cyberman", "dalek", "wheeping", "tardis,", "dalek", "cyberman", "sonic", "screwdriver", "time", "lord", "gillifrey", "regeneration", "vortex", "paradox", "future", "past", "present",
+ "alien", "planetx", "universe", "galaxy", "star", "sun", "moon", "earth", "human", "companion", "martha", "donnna", "amy", "jack", "unit", "invasion", "attack", "defense", "war", "peace", "danger", "adventure", "mistery", "secret", "prophecy", "destiny",
+ "choice","sacrifice","hope","hear","love","hate","enemy","monster","villain","hero","genius","madman","angel","blink","silence","empty","ghost","shadow","light","dark","fire","water","air","earth","metal","stone","wood","flesh","blood",
+ "heart","hind","foul","dream","nightmare","reality","illusion","truth","lie","change","growth","decay","death","life","geronimo","exterminate","delete","upgrade","resistance","impossible","fantastic",
+"master"];
+const wordDisplayElement = document.getElementById("word-display");
+const guessesElement = document.getElementById("guesses");
+const messageElement = document.getElementById("message");
+
+function startGame() {
+    word = words[Math.floor(Math.random() * words.length)];
+    wordDisplay = "";
+    guessedLetters = [];
+    remainingGuesses = 6;
+
+    for (let i = 0; i < word.length; i++) {
+        wordDisplay += "_ ";
+    }
+
+    updateDisplay();
+    messageElement.textContent = "";
+    createAlphabetButtons(); // Create/enable alphabet buttons
+}
+
+function createAlphabetButtons() {
+  alphabetButtons = document.getElementById("alphabet-buttons");
+  alphabetButtons.innerHTML = ""; // Clear existing buttons
+
+  for (let i = 0; i < 26; i++) {
+      const letter = String.fromCharCode(97 + i);
+      const button = document.createElement("button");
+      button.textContent = letter.toUpperCase();
+      button.onclick = function() {
+          guessLetter(letter); // Pass the letter directly
+      };
+      alphabetButtons.appendChild(button);
+  }
+}
+
+function guessLetter(letter) { // Now takes letter as argument
+    if (guessedLetters.includes(letter)) {
+        messageElement.textContent = "You already guessed that letter.";
+        return;
+    }
+
+    guessedLetters.push(letter);
+    const button = alphabetButtons.querySelector(`button[textContent="${letter.toUpperCase()}"]`);
+    if(button) {
+        button.disabled = true;
+    }
+
+    let letterFound = false;
+    for (let i = 0; i < word.length; i++) {
+        if (word[i] === letter) {
+            wordDisplay = wordDisplay.substring(0, i * 2) + letter + " " + wordDisplay.substring((i + 1) * 2);
+            letterFound = true;
+        }
+    }
+
+    if (!letterFound) {
+        remainingGuesses--;
+    }
+
+    updateDisplay();
+    checkGameStatus();
+}
+
+function updateDisplay() {
+    wordDisplayElement.textContent = wordDisplay;
+    guessesElement.textContent = "Guessed letters: " + guessedLetters.join(", ");
+}
+
+function checkGameStatus() {
+    if (!wordDisplay.includes("_")) {
+        messageElement.textContent = "You win!";
+        setTimeout(startGame, 3000);
+    } else if (remainingGuesses === 0) {
+        messageElement.textContent = "You lose! The word was: " + word;
+        setTimeout(startGame, 3000);
+    } else {
+        messageElement.textContent = "";
+    }
+}
+
+startGame();
+
+</script>
+
+</body>
+</html>
