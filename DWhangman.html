@@ -54,7 +54,7 @@ body {
 <div id="game-area">
   <h1>Doctor Who Hangman</h1>
   <div id="hangman-image">
-    <img src="Photoroom-20250220_023417.png" alt="Hangman Figure"> </div> <div id="word-display"></div>
+    <img src="/storage/emulated/0/Pictures/Photoroom/Photoroom-20250220_023417.png" alt="Hangman Figure"> </div> <div id="word-display"></div>
   <div id="guesses"></div>
   <div id="alphabet-buttons"></div>
   <p id="message"></p>
@@ -68,202 +68,92 @@ let remainingGuesses = 6;
 let alphabetButtons; // Store buttons
 
 const words = ["doctor", "banana", "rose", "dana", "cyberman", "dalek", "wheeping", "tardis,", "dalek", "cyberman", "sonic", "screwdriver", "time", "lord", "gillifrey", "regeneration", "vortex", "paradox", "future", "past", "present",
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Image Mine Game (Online Images)</title>
-    <style>
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(10, 30px);
-            grid-gap: 1px;
-            border: 1px solid black;
+ "alien", "planetx", "universe", "galaxy", "star", "sun", "moon", "earth", "human", "companion", "martha", "donnna", "amy", "jack", "unit", "invasion", "attack", "defense", "war", "peace", "danger", "adventure", "mistery", "secret", "prophecy", "destiny",
+ "choice","sacrifice","hope","hear","love","hate","enemy","monster","villain","hero","genius","madman","angel","blink","silence","empty","ghost","shadow","light","dark","fire","water","air","earth","metal","stone","wood","flesh","blood",
+ "heart","hind","foul","dream","nightmare","reality","illusion","truth","lie","change","growth","decay","death","life","geronimo","exterminate","delete","upgrade","resistance","impossible","fantastic",
+"master"];
+const wordDisplayElement = document.getElementById("word-display");
+const guessesElement = document.getElementById("guesses");
+const messageElement = document.getElementById("message");
+
+function startGame() {
+    word = words[Math.floor(Math.random() * words.length)];
+    wordDisplay = "";
+    guessedLetters = [];
+    remainingGuesses = 6;
+
+    for (let i = 0; i < word.length; i++) {
+        wordDisplay += "_ ";
+    }
+
+    updateDisplay();
+    messageElement.textContent = "";
+    createAlphabetButtons(); // Create/enable alphabet buttons
+}
+
+function createAlphabetButtons() {
+  alphabetButtons = document.getElementById("alphabet-buttons");
+  alphabetButtons.innerHTML = ""; // Clear existing buttons
+
+  for (let i = 0; i < 26; i++) {
+      const letter = String.fromCharCode(97 + i);
+      const button = document.createElement("button");
+      button.textContent = letter.toUpperCase();
+      button.onclick = function() {
+          guessLetter(letter); // Pass the letter directly
+      };
+      alphabetButtons.appendChild(button);
+  }
+}
+
+function guessLetter(letter) { // Now takes letter as argument
+    if (guessedLetters.includes(letter)) {
+        messageElement.textContent = "You already guessed that letter.";
+        return;
+    }
+
+    guessedLetters.push(letter);
+    const button = alphabetButtons.querySelector(`button[textContent="${letter.toUpperCase()}"]`);
+    if(button) {
+        button.disabled = true;
+    }
+
+    let letterFound = false;
+    for (let i = 0; i < word.length; i++) {
+        if (word[i] === letter) {
+            wordDisplay = wordDisplay.substring(0, i * 2) + letter + " " + wordDisplay.substring((i + 1) * 2);
+            letterFound = true;
         }
-        .cell {
-            width: 30px;
-            height: 30px;
-            border: 1px solid gray;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            background-color: lightgray;
-        }
-        .revealed {
-            background-color: white;
-        }
-        .mine img {
-            width: 30px;
-            height: 30px;
-        }
-        .cell img {
-            width: 30px;
-            height: 30px;
-        }
-    </style>
-</head>
-<body>
-    <div id="game-board" class="grid"></div>
-    <script>
-        const boardSize = 10;
-        const numMines = 15;
+    }
 
-        const board = [];
-        const gameBoard = document.getElementById("game-board");
+    if (!letterFound) {
+        remainingGuesses--;
+    }
 
-        function initializeBoard() {
-            for (let i = 0; i < boardSize; i++) {
-                board[i] = [];
-                for (let j = 0; j < boardSize; j++) {
-                    board[i][j] = {
-                        isMine: false,
-                        isRevealed: false,
-                        adjacentMines: 0,
-                        element: null,
-                    };
-                }
-            }
-            placeMines();
-            calculateAdjacentMines();
-            createGameBoard();
-        }
+    updateDisplay();
+    checkGameStatus();
+}
 
-        function placeMines() {
-            let minesPlaced = 0;
-            while (minesPlaced < numMines) {
-                const row = Math.floor(Math.random() * boardSize);
-                const col = Math.floor(Math.random() * boardSize);
-                if (!board[row][col].isMine) {
-                    board[row][col].isMine = true;
-                    minesPlaced++;
-                }
-            }
-        }
+function updateDisplay() {
+    wordDisplayElement.textContent = wordDisplay;
+    guessesElement.textContent = "Guessed letters: " + guessedLetters.join(", ");
+}
 
-        function calculateAdjacentMines() {
-            for (let i = 0; i < boardSize; i++) {
-                for (let j = 0; j < boardSize; j++) {
-                    if (!board[i][j].isMine) {
-                        let count = 0;
-                        for (let x = -1; x <= 1; x++) {
-                            for (let y = -1; y <= 1; y++) {
-                                const newRow = i + x;
-                                const newCol = j + y;
-                                if (
-                                    newRow >= 0 &&
-                                    newRow < boardSize &&
-                                    newCol >= 0 &&
-                                    newCol < boardSize &&
-                                    board[newRow][newCol].isMine
-                                ) {
-                                    count++;
-                                }
-                            }
-                        }
-                        board[i][j].adjacentMines = count;
-                    }
-                }
-            }
-        }
+function checkGameStatus() {
+    if (!wordDisplay.includes("_")) {
+        messageElement.textContent = "You win!";
+        setTimeout(startGame, 3000);
+    } else if (remainingGuesses === 0) {
+        messageElement.textContent = "You lose! The word was: " + word;
+        setTimeout(startGame, 3000);
+    } else {
+        messageElement.textContent = "";
+    }
+}
 
-        function createGameBoard() {
-            for (let i = 0; i < boardSize; i++) {
-                for (let j = 0; j < boardSize; j++) {
-                    const cell = document.createElement("div");
-                    cell.classList.add("cell");
-                    cell.dataset.row = i;
-                    cell.dataset.col = j;
-                    cell.addEventListener("click", () => handleCellClick(i, j));
+startGame();
 
-                    const img = document.createElement("img");
-                    img.src = "/Pictures/Screenshots/Screenshot_20250128-080209_Google (1).png"; // Replace with your blank image URL
-                    cell.appendChild(img);
+</script>
 
-                    gameBoard.appendChild(cell);
-                    board[i][j].element = cell;
-                }
-            }
-        }
-
-        function handleCellClick(row, col) {
-            if (board[row][col].isRevealed) return;
-
-            board[row][col].isRevealed = true;
-            board[row][col].element.classList.add("revealed");
-
-            const img = board[row][col].element.querySelector("img");
-
-            if (board[row][col].isMine) {
-                img.src = "/Pictures/Photoroom/Photoroom-20250220_023417.png"; // Replace with your mine image URL
-                revealMines();
-                alert("Game Over!");
-                return;
-            }
-
-            if (board[row][col].adjacentMines > 0) {
-                img.src = `/Photoroom/Photoroom-202502${board[row][col].adjacentMines === 1 ? '17_024425' : board[row][col].adjacentMines === 2 ? '22_092011' : board[row][col].adjacentMines === 3 ? '20_024041' : board[row][col].adjacentMines === 4 ? '22_091617' : board[row][col].adjacentMines === 5 ? '22_091752' : board[row][col].adjacentMines === 6 ? '22_092259' : board[row][col].adjacentMines === 7 ? '20_023728' : '22_092525'}.png`;
-            } else {
-                img.src = "HD-wallpaper-real-galaxy-atmosphere-sky-planets-black-dark-stars.jpg"; // Replace with your empty image URL
-                revealAdjacentCells(row, col);
-            }
-
-            checkWin();
-        }
-        
-        function revealAdjacentCells(row, col) {
-            for (let x = -1; x <= 1; x++) {
-                for (let y = -1; y <= 1; y++) {
-                    const newRow = row + x;
-                    const newCol = col + y;
-                    if (
-                        newRow >= 0 &&
-                        newRow < boardSize &&
-                        newCol >= 0 &&
-                        newCol < boardSize &&
-                        !board[newRow][newCol].isRevealed &&
-                        !board[newRow][newCol].isMine
-                    ) {
-                        board[newRow][newCol].isRevealed = true;
-                        board[newRow][newCol].element.classList.add("revealed");
-                        const img = board[newRow][newCol].element.querySelector("img");
-                        if (board[newRow][newCol].adjacentMines > 0) {
-                            img.src = `/storage/emulated/0/Pictures/Photoroom/Photoroom-202502${board[newRow][newCol].adjacentMines === 1 ? '17_024425' : board[newRow][newCol].adjacentMines === 2 ? '22_092011' : board[newRow][newCol].adjacentMines === 3 ? '20_024041' : board[newRow][newCol].adjacentMines === 4 ? '22_091617' : board[newRow][newCol].adjacentMines === 5 ? '22_091752' : board[newRow][newCol].adjacentMines === 6 ? '22_092259' : board[newRow][newCol].adjacentMines === 7 ? '20_023728' : '22_092525'}.png`;
-                        } else {
-                            img.src = "HD-wallpaper-real-galaxy-atmosphere-sky-planets-black-dark-stars.jpg";
-                            revealAdjacentCells(newRow, newCol);
-                        }
-                    }
-                }
-            }
-        }
-
-        function revealMines() {
-            for (let i = 0; i < boardSize; i++) {
-                for (let j = 0; j < boardSize; j++) {
-                    if (board[i][j].isMine) {
-                        board[i][j].element.classList.add("mine");
-                        board[i][j].element.querySelector("img").src =
-"/storage/emulated/0/Pictures/Photoroom/Photoroom-20250220_023417.png"; // Replace with your mine image URL
-                    }
-                }
-            }
-        }
-
-        function checkWin() {
-            let revealedCount = 0;
-            for (let i = 0; i < boardSize; i++) {
-                for (let j = 0; j < boardSize; j++) {
-                    if (board[i][j].isRevealed) {
-                        revealedCount++;
-                    }
-                }
-            }
-            if (revealedCount === boardSize * boardSize - numMines) {
-                alert("You Win!");
-            }
-        }
-
-        initializeBoard();
-    </script>
 </body>
 </html>
