@@ -106,7 +106,7 @@
                     cell.addEventListener("click", () => handleCellClick(i, j));
 
                     const img = document.createElement("img");
-                    img.src = "Screenshot_20250128-080209_Google (1).png"; // Replace with your blank image URL
+                    img.src = "Screenshot_20250128-080209_Google(1).png"; // Replace with your blank image URL
                     cell.appendChild(img);
 
                     gameBoard.appendChild(cell);
@@ -131,7 +131,7 @@
             }
 
             if (board[row][col].adjacentMines > 0) {
-                img.src = `Photoroom/Photoroom-202502${board[row][col].adjacentMines === 1 ? '17_024425' : board[row][col].adjacentMines === 2 ? '22_092011' : board[row][col].adjacentMines === 3 ? '20_024041' : board[row][col].adjacentMines === 4 ? '22_091617' : board[row][col].adjacentMines === 5 ? '22_091752' : board[row][col].adjacentMines === 6 ? '22_092259' : board[row][col].adjacentMines === 7 ? '20_023728' : '22_092525'}.png`;
+                img.src = 'Photoroom/Photoroom-202502${board[row][col].adjacentMines === 1 ? '17_024425' : board[row][col].adjacentMines === 2 ? '22_092011' : board[row][col].adjacentMines === 3 ? '20_024041' : board[row][col].adjacentMines === 4 ? '22_091617' : board[row][col].adjacentMines === 5 ? '22_091752' : board[row][col].adjacentMines === 6 ? '22_092259' : board[row][col].adjacentMines === 7 ? '20_023728' : '22_092525'}.png`;
             } else {
                 img.src = "HD-wallpaper-real-galaxy-atmosphere-sky-planets-black-dark-stars.jpg"; // Replace with your empty image URL
                 revealAdjacentCells(row, col);
