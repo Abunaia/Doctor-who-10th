@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Dots and Boxes</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #111;
+        }
+
+        #game-board {
+            position: relative;
+            width: 90vw;
+            max-width: 600px;
+            aspect-ratio: 1 / 1;
+            background: url('HD-wallpaper-real-galaxy-atmosphere-sky-planets-black-dark-stars.jpg') no-repeat center;
+            background-size: cover;
+        }
+
+        .dot {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+            background-color: transparent;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .dot img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+        .line {
+            position: absolute;
+            background-color: blue;
+            height: 4px;
+        }
+
+        .box {
+            position: absolute;
+        }
+
+        .box img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50%;
+            height: 50%;
+            object-fit: contain;
+        }
+
+        @media (max-width: 600px) {
+            .dot {
+                width: 25px;
+                height: 25px;
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .dot {
+                width: 20px;
+                height: 20px;
+                padding: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-board"></div>
+
+<img id="player1-image" src="/storage/emulated/0/Pictures/Photoroom/Photoroom-20250223_053537.png" style="display: none;">
+<img id="player2-image" src="/storage/emulated/0/Pictures/Photoroom/Photoroom-20250215_060405.png" style="display: none;">
+<img id="dalek-image" src="/storage/emulated/0/Pictures/Photoroom/Photoroom-20250214_215440.png" style="display: none;">
+
+<script>
+    const board = document.getElementById('game-board');
+    const player1Image = document.getElementById('player1-image');
+    const player2Image = document.getElementById('player2-image');
+    const dalekImage = document.getElementById('dalek-image');
+
+    let dots = [];
+    let selectedDots = [];
+    let playerTurn = 1;
+    let boxes = [];
+    let boardSize = 8;
+    let grid = [];
+    let lines = [];
+    let scores = [0, 0];
+    let currentPlayer = 1;
+    let boxGrid = Array.from({ length: boardSize - 1 }, () => Array(boardSize - 1).fill(null));
+
+    function createBoard() {
+        board.innerHTML = "";
+        dots = [];
+        grid = [];
+        boxGrid = Array.from({ length: boardSize - 1 }, () => Array(boardSize - 1).fill(null));
+
+        for (let i = 0; i < boardSize; i++) {
+            grid[i] = [];
+            for (let j = 0; j < boardSize; j++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                const dalek = document.createElement('img');
+                dalek.src = dalekImage.src;
+                dot.appendChild(dalek);
+                dot.dataset.row = i;
+                dot.dataset.col = j;
+                dot.addEventListener('click', () => handleDotClick(i, j));
+                board.appendChild(dot);
+                dots.push(dot);
+                grid[i][j] = dot;
+            }
+        }
+        adjustBoard();
+    }
+
+    function handleDotClick(row, col) {
+        selectedDots.push({ row, col });
+        if (selectedDots.length === 2) {
+            drawLines(selectedDots[0], selectedDots[1]);
+            selectedDots = [];
+        }
+    }
+
+    function drawLines(dot1, dot2) {
+        if (isAdjacent(dot1, dot2)) {
+            const line = document.createElement('div');
+            line.classList.add('line');
+
+            const rect1 = grid[dot1.row][dot1.col].getBoundingClientRect();
+            const rect2 = grid[dot2.row][dot2.col].getBoundingClientRect();
+            const boardRect = board.getBoundingClientRect();
+
+            const x1 = rect1.left + rect1.width / 2 - boardRect.left;
+            const y1 = rect1.top + rect1.height / 2 - boardRect.top;
+            const x2 = rect2.left + rect2.width / 2 - boardRect.left;
+            const y2 = rect2.top + rect2.height / 2 - boardRect.top;
+
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+            line.style.width = length + 'px';
+            line.style.position = 'absolute';
+            line.style.left = x1 + 'px';
+            line.style.top = y1 + 'px';
+            line.style.transformOrigin = 'left center';
+            line.style.transform = `rotate(${angle}deg)`;
+
+            board.appendChild(line);
+            lines.push({ dot1, dot2 });
+
+            currentPlayer = playerTurn;
+            checkForBoxes();
+            playerTurn = 3 - playerTurn;
+        }
+    }
+
+    function isAdjacent(dot1, dot2) {
+        return (Math.abs(dot1.row - dot2.row) + Math.abs(dot1.col - dot2.col) === 1);
+    }
+
+    function checkForBoxes() {
+        for (let i = 0; i < boardSize - 1; i++) {
+            for (let j = 0; j < boardSize - 1; j++) {
+                if (isBoxCompleted(i, j) && !boxGrid[i][j]) {
+                    createBox(i, j);
+                    scores[playerTurn - 1]++;
+                }
+            }
+        }
+    }
+
+    function isBoxCompleted(row, col) {
+        const dotsToCheck = [
+            { row: row, col: col },
+            { row: row, col: col + 1 },
+            { row: row + 1, col: col },
+            { row: row + 1, col: col + 1 }
+        ];
+
+        let boxLines = 0;
+        for (let i = 0; i < 4; i++) {
+            for (let j = i + 1; j < 4; j++) {
+                if (lines.some(line => 
+                    (line.dot1.row === dotsToCheck[i].row && line.dot1.col === dotsToCheck[i].col && 
+                     line.dot2.row === dotsToCheck[j].row && line.dot2.col === dotsToCheck[j].col) ||
+                    (line.dot2.row === dotsToCheck[i].row && line.dot2.col === dotsToCheck[i].col && 
+                     line.dot1.row === dotsToCheck[j].row && line.dot1.col === dotsToCheck[j].col)
+                )) {
+                    boxLines++;
+                }
+            }
+        }
+        return boxLines === 4;
+    }
+
+    function createBox(row, col) {
+        if (boxGrid[row
+][col]) return;
+
+        const box = document.createElement('div');
+        box.classList.add('box');
+
+        const dot = grid[row][col];
+        const dotRect = dot.getBoundingClientRect();
+        const boardRect = board.getBoundingClientRect();
+
+        // Calculate the box position and size based on the dot's dimensions
+        box.style.left = dotRect.left - boardRect.left + 'px';
+        box.style.top = dotRect.top - boardRect.top + 'px';
+        box.style.width = dotRect.width + 'px';
+        box.style.height = dotRect.height + 'px';
+
+        const img = document.createElement('img');
+        img.src = currentPlayer === 1 ? player1Image.src : player2Image.src;
+
+        // Set image size relative to the box (adjust the percentage as needed)
+        img.style.width = '100%'; // 50% of the box width
+        img.style.height = '100%'; // 50% of the box height
+
+        // Center the image within the box
+        img.style.position = 'absolute';
+        img.style.top = '-20%';
+        img.style.left = '-20%';
+        img.style.transform = 'translate(100%, 80%)';
+
+        box.appendChild(img);
+        board.appendChild(box);
+        boxes.push(box);
+
+        boxGrid[row][col] = box;
+    }
+
+    function adjustBoard() {
+        dots.forEach(dot => {
+            dot.style.left = `${dot.dataset.col * 60}px`;
+            dot.style.top = `${dot.dataset.row * 60}px`;
+        });
+    }
+
+    createBoard();
+</script>
+
+</body>
+</html>
