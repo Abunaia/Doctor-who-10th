@@ -10,38 +10,40 @@
         is one dalek touching his box. The second actor that played the doctor means there two dalek touching his 
     square. Make it through without touching the dalek and you win</p>
     <style>
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(10, 30px);
-            grid-gap: 1px;
-            border: 1px solid black;
-        }
-        .cell {
-            width: 50px;
-            height: 50px;
-            border: 1px solid gray;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            background-color: lightgray;
-        }
-            .p {
-                font-size: 8px;
-                color: blue;
-        }
-        .revealed {
-            background-color: white;
-        }
-        .mine img {
-            width: 50px;
-            height: 50px;
-        }
-        .cell img {
-            width: 50px;
-            height: 50px;
-        }
-    </style>
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(10, 8vw); /* 8% of the viewport width */
+        grid-gap: 1px;
+        border: 1px solid black;
+        max-width: 90vw; /* Optional: Prevent it from taking up the entire width */
+    }
+    .cell {
+        width: 8vw; /* Match the grid column size */
+        height: 8vw; /* Make cells square */
+        border: 1px solid gray;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        background-color: lightgray;
+    }
+    .p {
+        font-size: 3vw; /* Adjust font size relative to viewport width */
+        color: blue;
+    }
+    .revealed {
+        background-color: white;
+    }
+    .mine img {
+        width: 8vw; /* Match cell size */
+        height: 8vw; /* Match cell size */
+    }
+    .cell img {
+        width: 8vw; /* Match cell size */
+        height: 8vw; /* Match cell size */
+    }
+</style>
+
 </head>
 <body>
     <div id="game-board" class="grid"></div>
