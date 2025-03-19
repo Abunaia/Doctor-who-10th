@@ -19,21 +19,16 @@
 
     <script>
         function sendMessage() {
-            const message = document.getElementById('messageInput').value;
-            // Assuming the clock page is in a new window or iframe, you'd need to adjust this.
-            // For example, if it's in a new window:
-            if (window.clockWindow && window.clockWindow.receiveMessage) {
-                window.clockWindow.receiveMessage(message);
-            } else {
-              alert("Clock window not found. Open the clock window first.");
-            }
-        }
-
-      //opens the clock in a new window.
-      window.onload = function(){
-         window.clockWindow = window.open('https://abunaia.github.io/Doctor-who-10th/facecodeclock2.html');
-      }
-
+    const message = document.getElementById('messageInput').value;
+    if (!window.clockWindow || window.clockWindow.closed) {
+        window.clockWindow = window.open('https://abunaia.github.io/Doctor-who-10th/facecodeclock2.html');
+    }
+    if (window.clockWindow && window.clockWindow.receiveMessage) {
+        window.clockWindow.receiveMessage(message);
+    } else {
+        alert("Clock window not found. Open the clock window first.");
+    }
+}
     </script>
 </body>
 </html>
